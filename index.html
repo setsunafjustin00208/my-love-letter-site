@@ -7,6 +7,9 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.7.32/sweetalert2.all.min.js"></script>
   <style>
     /* Grid and container styles remain similar */
+    #app {
+      display: none;
+    }
     .cursive-title {
       font-family: 'Dancing Script', cursive;
       font-size: 2.5em;
@@ -231,6 +234,26 @@
       });
       }, 5000); // 5 seconds delay before showing the first modal
     };
+
+        // Password protection code
+        window.addEventListener('load', function() {
+      Swal.fire({
+        title: 'Enter the Secret Password',
+        input: 'password',
+        inputPlaceholder: 'Type our special word...',
+        showCancelButton: false,
+        allowOutsideClick: false,
+        inputValidator: (value) => {
+          if (!value || value.toLowerCase() !== 'wuvvv_uuu') {
+            return 'Incorrect password! Try again ❤️'
+          }
+        }
+      }).then((result) => {
+        if (result.isConfirmed) {
+          document.getElementById('app').style.display = 'block';
+        }
+      });
+    });
 
     PetiteVue.createApp({
       fontSize: 'small',
