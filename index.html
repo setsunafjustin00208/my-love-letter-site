@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/1.0.2/css/bulma.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/petite-vue/0.4.1/petite-vue.iife.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.7.32/sweetalert2.all.min.js"></script>
+  <style>
+    /* Grid and container styles remain similar */
+    .cursive-title {
+      font-family: 'Dancing Script', cursive;
+      font-size: 2.5em;
+      margin-bottom: 1em;
+    }
+    .box-item {
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .box-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .effect-container {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1;
+      overflow: hidden;
+      background: #000;
+    }
+ /* Modified Text Portrait styling */
+ .text-portrait {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      padding: 10px;
+      text-align: justify;
+      background-size: cover;
+      background-position: center;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-size: 14px;
+      line-height: 1;
+      word-spacing: 1px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      overflow: hidden;
+      /* Remove flex centering */
+      /* display: flex; */
+      /* align-items: center; */
+      /* justify-content: center; */
+    }
+    /* Rest of the existing styles remain the same */
+    .effect-active .text-portrait {
+      opacity: 1;
+    }
+    /* Optional image loader behind the text (ensures image loads first) */
+    .image-loader {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center;
+      z-index: 3;
+      opacity: 1;
+      transition: opacity 0.5s ease-in-out;
+    }
+
+    .image-loader.hide {
+      opacity: 0;
+    }
+    /* Controls styling */
+    .controls {
+      padding: 20px;
+  
+    }
+    /* Custom SweetAlert Styles */
+    .swal2-popup {
+      background: transparent !important;
+      box-shadow: none !important;
+    }
+    .swal2-title, .swal2-html-container {
+      color: white !important;
+    }
+    /* Enhanced Heart Animation */
+    @keyframes floatingHeart {
+      0% { transform: translateY(0) scale(1) rotate(0); }
+      25% { transform: translateY(-10px) scale(1.1) rotate(5deg); }
+      50% { transform: translateY(0) scale(1) rotate(0); }
+      75% { transform: translateY(-5px) scale(1.05) rotate(-5deg); }
+      100% { transform: translateY(0) scale(1) rotate(0); }
+    }
+    .floating-heart {
+      animation: floatingHeart 2s infinite ease-in-out;
+      display: inline-block;
+      font-size: 3em;
+      margin: 10px;
+    }
+    .has-background-stars {
+      background: url('https://i.postimg.cc/9QCQwsq3/pexels-felixmittermeier-956981.jpg') no-repeat center center fixed;
+      background-size: cover;
+    }
+  </style>
+</head>
+<body data-them="dark" class="has-background-stars">
+  <div id="app" v-scope>
+    <div class="container p-4">
+      <h1 class="title cursive-title">For my Moonlight......</h1>
+      
+      <div class="box controls mb-4">
+        <div class="field">
+          <label class="label">Global Controls</label>
+          <div class="buttons">
+            <button class="button is-primary has-background-primary-dark has-text-primary-light" @click="handleToggleAll">
+              {{ allActive ? 'Disable All' : 'Enable All' }}
+            </button>
+            <button class="button is-info has-background-info-dark has-text-primary-light" @click="fontSize = fontSize === 'small' ? 'large' : 'small'">
+              Toggle Text Size
+            </button>
+            </div>
+            </div>
+            </div>
+
+            <div class="grid-container">
+            <template v-for="(item, index) in items">
+              <div class="container box">
+                <div class="field mb-4">
+                    <label class="label">{{ item.imageTitle }}</label>
+                  <button class="button is-primary has-background-primary-dark has-text-primary-light is-small" @click="handleItemToggle(item)">
+                    {{ item.active ? 'Disable' : 'Enable' }} Effect
+                  </button>
+                </div>
+                
+                <div class="effect-container" :class="{ 'effect-active': item.active }">
+                  <!-- Optional: Image loader div to ensure the image is loaded first -->
+                  <div class="image-loader" 
+                    :id="'image-loader-' + index" 
+                    :class="{ hide: !item.showImage }" 
+                    :style="{ backgroundImage: `url(${item.imageUrl})` }">
+                </div>
+                  <!-- Text portrait overlay that uses the image as its background -->
+                  <div class="text-portrait" 
+                    :style="{ 
+                      fontSize: fontSize === 'small' ? '10px' : '12px', 
+                      backgroundImage: `url(${item.imageUrl})` 
+                    }">
+                    <!-- Repeat text 15 times (adjust number as needed) -->
+                    <template v-for="i in 1000">{{ item.text }}</template>
+                  </div>
+                </div>
+              </div>
+            </template>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const showLoveMessage = () => {
+      // Delay before showing the first modal
+      setTimeout(() => {
+      // First show a loading state
+      Swal.fire({
+        title: 'Magic happening...',
+        html: '<span class="floating-heart">✨</span>',
+        timer: 5000,
+        timerProgressBar: true,
+        showConfirmButton: false,
+        background: 'transparent',
+        didOpen: () => {
+        Swal.showLoading();
+        }
+      }).then(() => {
+        // After 5 seconds, show the love message
+        let timerInterval;
+        Swal.fire({
+        title: '<span class="floating-heart">❤️</span>',
+        html: `
+          <div class="animate__animated animate__fadeIn">
+          <h2 style="color: white; font-size: 1.5em; margin-bottom: 1em;">I love you moonlight</h2>
+          <p style="color: #f8d7da;">You light up my darkest nights</p>
+          <div style="margin-top: 1em;">
+            <span class="floating-heart" style="animation-delay: 0.2s;">✨</span>
+            <span class="floating-heart" style="animation-delay: 0.4s;">🌙</span>
+            <span class="floating-heart" style="animation-delay: 0.6s;">✨</span>
+          </div>
+          </div>
+        `,
+        background: 'transparent',
+        backdrop: `
+          rgba(0,0,123,0.4)
+          url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='40' cy='40' r='36' stroke='%23fff' stroke-width='4' fill='none' opacity='0.4'/%3E%3C/svg%3E")
+          left top
+          no-repeat
+        `,
+        showConfirmButton: false,
+        timer: 5000,
+        timerProgressBar: true,
+        didOpen: () => {
+          timerInterval = setInterval(() => {
+          const content = Swal.getHtmlContainer();
+          if (content) {
+            const b = content.querySelector('b');
+            if (b) {
+            b.textContent = Swal.getTimerLeft();
+            }
+          }
+          }, 100);
+        },
+        willClose: () => {
+          clearInterval(timerInterval);
+        }
+        });
+      });
+      }, 5000); // 5 seconds delay before showing the first modal
+    };
+
+    PetiteVue.createApp({
+      fontSize: 'small',
+      items: [
+        { 
+          active: false,
+          showImage: true,
+          text: `Take me back into the arms I love
+                  Need me like you did before
+                  Touch me once again and remember when
+                  There was no one that you wanted more
+                  Don't go, you know you'll break my heart
+                  She won't love you like I will
+                  I'm the one who'll stay when she walks away
+                  And you know I'll be standing here still
+                  I'll be waiting for you here inside my heart
+                  I'm the one who wants to love you more
+                  You will see I can give you everything you need
+                  Let me be the one to love you more
+                  See me as if you never knew
+                  Hold me so you can't let go
+                  Just believe in me, I will make you see
+                  All the things that your heart needs to know
+                  I'll be waiting for you here inside my heart
+                  I'm the one who wants to love you more
+                  You will see I can give you everything you need
+                  Let me be the one to love you more
+                  Someday, all the love that we had can be saved
+                  Whatever it takes, we'll find a way
+                  Believe me (believe me), I will make you see
+                  All the things that your heart needs to know
+                  I'll be waiting for you here inside my heart
+                  I'm the one who wants to love you more
+                  Can't you see I can give you everything you need?
+                  Let me be the one to love you more
+                  Oh, oh-oh-oh, oh-oh-oh
+                  Oh-oh-oh, oh-oh, oh-oh-oh
+                  Oh-oh-oh-oh, oh, oh
+                  Oh, oh-oh-oh, oh-oh-oh
+                  Oh-oh-oh, oh-oh, oh-oh-oh
+                  Oh-oh-oh-oh, oh, oh`,
+          imageUrl: 'https://i.postimg.cc/G2wKzSmP/462553621-1104323077989489-7599751095661597081-n.jpg',
+          imageTitle: 'The day you owned the internet with your solo performance'
+        },
+        { 
+          active: false,
+          showImage: true,
+          text: `You (you), you are (you are) my universe
+                And I (I) just want (just want) to put you first
+                And you (you), you are (you are) my universe, and I
+                In the night, I lie and look up at you
+                When the morning comes, I watch you rise
+                There's a paradise they couldn't capture
+                That bright infinity inside your eyes
+                매일 밤 네게 날아가 (가) 꿈이란 것도 잊은 채 나 웃으며 너를 만나 (나)
+                Never ending forever, baby
+                You (you), you are (you are) my universe
+                And I (I) just want (just want) to put you first
+                And you (you), you are (you are) my universe
+                And you make my world light up inside
+                어둠이 내겐 더 편했었지 길어진 그림자 속에서 (eyes)
+                And they said that we can't be together
+                Because, because we come from different sides
+                You (you), you are (you are) my universe
+                And I (I) just want (just want) to put you first
+                And you (you), you are (you are) my universe
+                And you make my world light up inside
+                My universe (doo-doo, doo-doo)
+                My universe (doo-doo, doo-doo)
+                My universe (doo-doo, doo-doo)
+                (You make my world)
+                You make my world light up inside
+                Make my world light up inside
+                나를 밝혀주는 건 너란 사랑으로 수 놓아진 별
+                내 우주의 넌 또 다른 세상을 만들어 주는 걸
+                너는 내 별이자 나의 우주니까
+                지금 이 시련도 결국엔 잠시니까
+                너는 언제까지나 지금처럼 밝게만 빛나줘
+                우리는 너를 따라 이 긴 밤을 수놓을 거야
+                너와 함께 날아가 (가)
+                When I'm without you, I'm crazy
+                자 어서 내 손을 잡아 (아)
+                We are made of each other, baby
+                You (you), you are (you are) my universe
+                And I (I) just want (just want) to put you first
+                And you (you), you are (you are) my universe
+                And you make my world light up inside
+                My universe (you, you are)
+                My universe (I just want)
+                My universe (you, you are my universe, and I)
+                My universe`,
+          imageUrl: 'https://i.postimg.cc/MpLdfGkF/475345121-2012990952474609-6236489960719181414-n.jpg',
+          imageTitle: 'The day are eyes met and the universe conspired'
+        },
+        { 
+          active: false,
+          showImage: true,
+          text: `Eurt si em tuoba yas yeht gnihtyrevE
+                Euphoria
+                Them superpowers getting neutralized, I can only watch in silence
+                The famous actor we once knew is lookin' paranoid and now spiralin'
+                You're movin' just like a degenerate, every antic is feelin' distasteful
+                I calculate you're not as calculated, I can even predict your angle
+                Fabricating stories on the family front 'cause you heard Mr. Morale
+                A pathetic master manipulator, I can smell the tales on you now
+                You're not a rap artist, you a scam artist with the hopes of being accepted
+                Tommy Hilfiger stood out, but FUBU never had been your collection
+                I make music that electrify 'em, you make music that pacify 'em
+                I can double down on that line, but spare you this time, that's random acts of kindness
+                Know you a master manipulator and habitual liar too
+                But don't tell no lie about me and I won't tell truths 'bout you
+                Shoo, shoo, shoo
+                Shoo, shoo, shoo
+                Bee, bee, bee, bee, bee, bee
+                Yeah, I'm out the way, yeah, I'm low, okay
+                Yeah, the island right here's remote, okay
+                I ain't thinkin' about no reaper
+                Nigga, I'm reapin' what I sow, okay
+                Got a Benjamin and a Jackson all in my house like I'm Joe, okay
+                Hellcat, made his homeboys and them type sell they soul, okay
+                Everybody wanna be demon 'til they get chipped by your throwaway
+                And I might do a show a day, once a lame, always a lame
+                Oh, you thought the money, the power or fame would make you go away?
+                Have you ever played have-you-ever? Okay, nigga, let's play
+                Have you ever walked your enemy down like with a poker face?
+                Have you ever paid five hundred thou' like to an open case?
+                Well, I have, and I failed at both, but I came out straight
+                I hate when a rapper talk about guns, then somebody die
+                They turn into nuns, then hop online, like \"Pray for my city\"
+                He fakin' for likes and digital hugs
+                His daddy a killer, he wanna be junior, they must've forgot the shit that they done
+                Dementia must run in his family, but let it get shaky
+                I'll park your son
+                The very first time I shot me a Drac', the homie had told me to aim it this way
+                I didn't point down enough, today, I'll show you I learned from those mistakes
+                Somebody had told me that you got a ring, on God, I'm ready to double the wage
+                I'd rather do that than let a Canadian nigga make Pac turn in his grave
+                Cutthroat business, you got shit twisted
+                What is it? The braids? I hurt your feelings? You don't wanna work with me no more? Okay
+                It's three G.O.A.T.s left, and I seen two of them kissin' and huggin' on stage
+                I love 'em to death, and in eight bars, I'll explain that phrase, huh
+                It's nothin' nobody can tell me, huh
+                I don't wanna talk on no celly, huh
+                You know I got language barriers, huh
+                It's no accent you can sell me, huh
+                Yeah, Cole and Aubrey know I'm a selfish nigga, the crown is heavy, huh
+                I pray they my real friends, if not, I'm YNW Melly
+                I don't like you poppin' shit at Pharrell, for him, I inherit the beef
+                Yeah, fuck all that pushin' P, let me see you push a T
+                You better off spinnin' again on him, you think about pushin' me
+                He's Terrence Thornton, I'm Terence Crawford, yeah, I'm whoopin' feet
+                We ain't gotta get personal, this a friendly fade, you should keep it that way
+                I know some shit about niggas that make Gunna Wunna look like a saint
+                This ain't been about critics, not about gimmicks, not about who the greatest
+                It's always been about love and hate, now let me say I'm the biggest hater
+                I hate the way that you walk, the way that you talk, I hate the way that you dress
+                I hate the way that you sneak diss, if I catch flight, it's gon' be direct
+                We hate the bitches you fuck, 'cause they confuse themself with real women
+                And notice, I said \"we,\" it's not just me, I'm what the culture feelin'
+                How many more fairytale stories 'bout your life 'til we had enough?
+                How many more Black features 'til you finally feel that you're Black enough?
+                I like Drake with the melodies, I don't like Drake when he act tough
+                You gon' make a nigga bring back Puff, let me see if Chubbs really crash somethin'
+                Yeah, my first one like my last one, it's a classic, you don't have one
+                Let your core audience stomach that, then tell 'em where you get your abs from
+                V12, it's a fast one, baow-baow-baow, last one
+                Headshot for the year, you better walk around like Daft Punk
+                Remember? Ayy, Top Dawg, who the fuck they think they playin' with?
+                Extortion my middle name as soon as you jump off of that plane, bitch
+                I'm allergic to the lame shit, only you like bein' famous
+                Yachty can't give you no swag neither, I don't give a fuck 'bout who you hang with
+                I hate the way that you walk, the way that you talk, I hate the way that you dress
+                Surprised you wanted that feature request
+                You know that we got some shit to address
+                I even hate when you say the word \"nigga,\" but that's just me, I guess
+                Some shit just cringeworthy, it ain't even gotta be deep, I guess
+                Still love when you see success, everything with me is blessed
+                Keep makin' me dance, wavin' my hand, and it won't be no threat
+                I'm knowin' they call you The Boy, but where is a man? 'Cause I ain't seen him yet
+                Matter fact, I ain't even bleed him yet, can I bleed him? Bet
+                When I see you stand by Sexyy Red, I believe you see two bad bitches
+                I believe you don't like women, it's real competition, you might pop ass with 'em
+                Let's speak on percentage, show me your splits, I'll make sure I double back with you
+                You were signed to a nigga that's signed to a nigga that said he was signed to that nigga
+                Try cease and desist on the \"Like That\" record? Hoe, what?
+                You ain't like that record? \"Back To Back,\" I like that record
+                I'ma get back to that, for the record
+                Why would I call around tryna get dirt on niggas? Y'all think all my life is rap?
+                That's hoe shit, I got a son to raise, but I can see you don't know nothin' 'bout that
+                Wakin' him up, know nothin' 'bout that
+                And tell him to pray, know nothin' 'bout that
+                And givin' him tools to walk through life like day-by-day, know nothin' 'bout that
+                Teachin' him morals, integrity, discipline, listen, man, you don't know nothin' 'bout that
+                Speakin' the truth and consider what God's considerin', you don't know nothin' 'bout that
+                Ain't 20-v-1, it's 1-v-20 if I gotta smack niggas that write with you
+                Yeah, bring 'em out too, I'll clean 'em out too
+                Tell BEAM that he better stay right with you
+                Am I battlin' ghost or AI? Nigga feelin' like Joel Hale Osteen
+                Funny, he was in a film called \"AI\"
+                And my sixth sense tellin' me to off him
+                I'ma blick niggas all in they coffin
+                Yeah, OV-hoe niggas is dick riders
+                Tell 'em run to America, they imitate heritage, they can't imitate this violence
+                What I learned is niggas don't like the West Coast
+                And I'm fine with it, I'll push the line with it
+                Pick a nigga off one at a time with it
+                We can be on a three-hour time difference
+                Don't speak on the family, crodie
+                It can get deep in the family, crodie
+                Talk about me and my family, crodie? Someone gon' bleed in your family, crodie
+                I be at New Ho King eatin' fried rice with a dip sauce and blammy, crodie
+                Tell me you're cheesin', fam
+                We can do this right now on the camera, crodie
+                Ayy, fuck y'all niggas, I don't trust y'all niggas
+                I wave one finger and thump y'all niggas like mmm
+                Field goal, punt y'all niggas, they punk y'all niggas, nobody never took my food
+                Whoever that's fuckin' with him, fuck you niggas, and fuck the industry too
+                If you take it there, I'm takin' it further
+                Psst, that's somethin' you don't wanna do
+                Ooh
+                We don't wanna hear you say \"nigga\" no more
+                We don't wanna hear you say \"nigga\" no more
+                Stop`,
+          imageUrl: 'https://i.postimg.cc/Jz0phkFX/476092386-598177913008764-7746957023322137681-n.jpg',
+          imageTitle: 'The day that i saw the real definiton of beauty'
+        },
+        { 
+          active: false,
+          showImage: true,
+          text: `You and me 끝나지 않을 history
+                Oh 나의 우주가 돼 준 우리의 이야기
+                목적지 없이 흘러가는 저 소행성처럼
+                나도 그저 떠내려가고 있었어
+                어둠 속에 찾은 나의 모든 dream
+                새롭게 시작될 story
+                When I'm with you
+                There is no one else
+                I get heaven to myself
+                When I'm with you
+                There is no one else
+                I feel this way
+                I've never felt
+                You and me
+                깨지지 않는 별처럼
+                너의 꿈이 되어 우주를 여행하는
+                어두운 길을 비춰주는 저 은하수처럼
+                너는 나를 향해 빛나고 있었어
+                어둠 속에 찾은 단 하나의 빛
+                너에게 향하는 나의 길
+                When I'm with you
+                There is no one else
+                I get heaven to myself
+                When I'm with you
+                There is no one else
+                A life, a sparkle in your eyes
+                Heaven coming through
+                And I love you
+                And I love you
+                Oh-oh-oh-oh, oh-oh-oh`,
+          imageUrl: 'https://i.postimg.cc/rptg1LMF/476357470-4112133539073751-6545580659380828082-n.jpg',
+          imageTitle: 'The day that i saw the dedication of service to the Lord'
+        }
+      ],
+      get allActive() {
+        return this.items.every(item => item.active);
+      },
+      handleToggleAll() {
+        const newState = !this.allActive;
+        this.items.forEach(item => {
+          item.active = newState;
+          item.showImage = !newState;
+        });
+        if (newState) { showLoveMessage(); }
+      },
+      handleItemToggle(item) {
+        // Toggle the image visibility
+        if (!item.showImage) {
+          item.showImage = true;
+        }
+        // Then toggle the text portrait effect
+        item.active = !item.active;
+        if (this.allActive) { showLoveMessage(); }
+      }
+    }).mount('#app');
+  </script>
+</body>
+</html>
