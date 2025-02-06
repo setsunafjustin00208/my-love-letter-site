@@ -182,7 +182,11 @@
         showConfirmButton: false,
         background: 'transparent',
         didOpen: () => {
-        Swal.showLoading();
+          Swal.showLoading();
+          const progressBar = Swal.getHtmlContainer().querySelector('.swal2-timer-progress-bar');
+          if (progressBar) {
+            progressBar.style.backgroundColor = 'white';
+          }
         }
       }).then(() => {
         // After 5 seconds, show the love message
@@ -203,7 +207,6 @@
         background: 'transparent',
         backdrop: `
           rgba(0,0,123,0.4)
-          url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='40' cy='40' r='36' stroke='%23fff' stroke-width='4' fill='none' opacity='0.4'/%3E%3C/svg%3E")
           left top
           no-repeat
         `,
@@ -492,6 +495,9 @@
         }
       ],
       get allActive() {
+        setTimeout(() => {
+          document.querySelector('button[ @click="handleToggleAll"]').disabled = false;
+        }, 7000);
         return this.items.every(item => item.active);
       },
       handleToggleAll() {
@@ -504,9 +510,7 @@
       },
       handleItemToggle(item) {
         // Toggle the image visibility
-        if (!item.showImage) {
-          item.showImage = true;
-        }
+        item.showImage = !item.showImage;
         // Then toggle the text portrait effect
         item.active = !item.active;
         if (this.allActive) { showLoveMessage(); }
